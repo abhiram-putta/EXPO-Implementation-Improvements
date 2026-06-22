@@ -1,6 +1,6 @@
 # EXPO — Reference Implementation + Improvements
 
-## Team / Contributors
+## Team Members
 - Abhiram Putta ([@abhiram-putta](https://github.com/abhiram-putta))
 - Tarun Teja Uppuluri ([@tarunuppuluri](https://github.com/tarunuppuluri))
 
