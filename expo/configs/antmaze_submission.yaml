@@ -1,0 +1,44 @@
+# Submission run — sized for ~85 min wall clock on RTX 5060 Ti.
+# Compromise vs paper: UTD=5 instead of 20 (frees env-step budget), 200k
+# pretrain instead of 500k (IL has converged by 200k). Everything else paper.
+# Auto-checkpoints every 5k env steps so a crash near the end loses <10 min.
+
+seed: 42
+device: auto
+log_dir: runs/antmaze_submission
+run_name: null
+
+env:
+  name: antmaze
+  dataset_id: D4RL/antmaze/medium-diverse-v1
+
+online_capacity: 1000000
+min_online_for_update: 256
+online_ratio: 0.5
+max_episode_steps: 1000
+
+pretrain_steps: 200000      # ~13 min on this GPU
+total_env_steps: 30000      # ~65 min at ~8 env-steps/sec
+batch_size: 256
+utd: 5                      # paper used 20; cut for time
+log_every: 500
+eval_every: 5000            # 6 mid-training evals
+eval_episodes: 20
+eval_at_pretrain_end: true  # critical baseline: IL-only success rate
+save_every_steps: 5000
+
+agent:
+  hidden_dim: 256           # paper-exact
+  diffusion_blocks: 3       # paper-exact
+  diffusion_steps: 10       # paper-exact
+  edit_layers: 3            # paper-exact
+  edit_dropout: 0.0
+  beta: 0.05                # exercises full EXPO mechanism
+  ensemble_size: 10         # paper-exact
+  num_min_q: 2              # paper-exact
+  n_otf_samples: 8          # paper-exact
+  gamma: 0.99               # paper-exact
+  tau: 0.005                # paper-exact
+  lr: 0.0003                # paper-exact
+  edit_grad_clip: 1.0
+  delayed_edit_steps: 2000  # reduced because pretrain is shorter

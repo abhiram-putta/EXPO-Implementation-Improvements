@@ -1,0 +1,48 @@
+# Tiny smoke test for n-step + progressive β. Verifies both new code paths
+# integrate cleanly. Same agent as pendulum_tiny.
+
+seed: 0
+device: cpu
+log_dir: runs/pendulum_smoke_improved
+run_name: smoke_improved
+
+env:
+  name: pendulum
+  offline_transitions: 200
+
+online_capacity: 1000
+min_online_for_update: 32
+online_ratio: 0.5
+max_episode_steps: 50
+
+pretrain_steps: 50
+total_env_steps: 200
+batch_size: 32
+utd: 2
+log_every: 50
+eval_every: 100
+eval_episodes: 2
+
+# === IMPROVEMENTS ===
+n_step: 3                       # n-step returns
+progressive_beta:               # progressive β scheduler
+  start: 0.5
+  end: 0.1
+  warmup_steps: 0
+  decay_steps: 150              # finishes by step 150 of online (75% in)
+
+agent:
+  hidden_dim: 32
+  diffusion_blocks: 1
+  diffusion_steps: 3
+  edit_layers: 1
+  edit_dropout: 0.0
+  beta: 0.5                     # initial β; will be overridden by scheduler
+  ensemble_size: 3
+  num_min_q: 2
+  n_otf_samples: 2
+  gamma: 0.99
+  tau: 0.005
+  lr: 0.0003
+  edit_grad_clip: 1.0
+  delayed_edit_steps: 50

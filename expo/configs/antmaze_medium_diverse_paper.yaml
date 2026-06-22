@@ -1,0 +1,51 @@
+# PAPER-SCALE config for Antmaze medium-diverse (offline-to-online setting).
+# This file documents the settings the EXPO paper used. It is NOT runnable on
+# CPU in any reasonable time — see RESULTS.md for timing estimates.
+# To actually run this you need a GPU and ~12-24 h per seed.
+
+seed: 42
+device: auto
+log_dir: runs/antmaze_paper
+run_name: null
+
+env:
+  name: antmaze
+  dataset_id: D4RL/antmaze/medium-diverse-v1
+
+online_capacity: 1000000
+min_online_for_update: 256
+online_ratio: 0.5
+max_episode_steps: 1000
+
+# --- Schedule (paper Table 1) ---
+pretrain_steps: 500000      # paper: 500k for Antmaze
+total_env_steps: 500000     # paper does not specify exact online step count;
+                            # 500k is a reasonable upper bound from Figure 5
+batch_size: 256
+utd: 20
+log_every: 1000
+eval_every: 5000            # paper: every 5k for Antmaze
+eval_episodes: 100          # paper: 100 episodes for Antmaze
+
+# --- Agent (paper Table 1, Antmaze column) ---
+agent:
+  hidden_dim: 256
+  diffusion_blocks: 3
+  diffusion_steps: 10
+  edit_layers: 3
+  edit_dropout: 0.0
+  beta: 0.05                # NB: paper uses β=0.0 for Antmaze offline-to-
+                            # online (no edits — they trust the 500k-step
+                            # pretrained base alone). We use β=0.05 (their
+                            # online-only Antmaze value) so the edit policy
+                            # actually contributes — this is the setting
+                            # where the full EXPO mechanism is exercised.
+                            # Switch to 0.0 to match their exact setup.
+  ensemble_size: 10
+  num_min_q: 2
+  n_otf_samples: 8
+  gamma: 0.99
+  tau: 0.005
+  lr: 0.0003
+  edit_grad_clip: 1.0
+  delayed_edit_steps: 5000

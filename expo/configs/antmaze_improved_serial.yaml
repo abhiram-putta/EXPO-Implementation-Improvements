@@ -1,0 +1,62 @@
+# EXPO + improvements (n-step + progressive β), serial run (single process =
+# 100% GPU). Resumes from same shared 500k IL pretrain checkpoint as
+# vanilla_serial. ~7 hours wall clock.
+#
+# Differences vs antmaze_vanilla_serial.yaml:
+#   - n_step: 3 (vs 1)
+#   - progressive_beta block (vs fixed β=0.05)
+# Everything else identical.
+
+seed: 42
+device: auto
+log_dir: runs/antmaze_improved_serial
+run_name: full
+
+env:
+  name: antmaze
+  dataset_id: D4RL/antmaze/medium-diverse-v1
+
+online_capacity: 1000000
+min_online_for_update: 256
+online_ratio: 0.5
+max_episode_steps: 1000
+
+pretrain_steps: 0
+total_env_steps: 200000
+batch_size: 256
+utd: 5
+log_every: 1000
+eval_every: 10000
+eval_episodes: 50
+eval_at_pretrain_end: false
+save_every_steps: 5000          # max safety
+
+# === IMPROVEMENTS ===
+# (1) N-step returns (S&B Ch. 7)
+n_step: 3
+
+# (2) Progressive β (S&B Ch. 2 ε-decay analogue)
+# Decay over 100k of 200k = 50% of training (vs 62% in 80k run). Same
+# explore-then-exploit shape but β reaches its end value (0.05) at the
+# halfway mark, leaving 100k env steps in pure-exploit mode.
+progressive_beta:
+  start: 0.3
+  end: 0.05
+  warmup_steps: 0
+  decay_steps: 100000
+
+agent:
+  hidden_dim: 256
+  diffusion_blocks: 3
+  diffusion_steps: 10
+  edit_layers: 3
+  edit_dropout: 0.0
+  beta: 0.3                     # initial β; will be overridden by scheduler
+  ensemble_size: 10
+  num_min_q: 2
+  n_otf_samples: 8
+  gamma: 0.99
+  tau: 0.005
+  lr: 0.0003
+  edit_grad_clip: 1.0
+  delayed_edit_steps: 5000

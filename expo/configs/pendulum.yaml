@@ -1,0 +1,60 @@
+# EXPO smoke config for Pendulum-v1.
+# Sized to run end-to-end in ~10 minutes on CPU.
+# See DECISIONS.md §14 for sizing rationale, and the commented "paper-scale"
+# overrides at the bottom for closer-to-paper settings.
+
+seed: 42
+device: auto                # "auto" → cuda if available, else cpu
+log_dir: runs/pendulum
+run_name: null              # null → timestamped
+
+# --- Env ---
+env:
+  name: pendulum
+  offline_transitions: 2000   # random-policy rollouts to seed offline buffer
+
+# --- Data / buffer ---
+online_capacity: 100000
+min_online_for_update: 256  # don't start updates until buffer has this many
+online_ratio: 0.5           # 50/50 mix in MixedBuffer
+max_episode_steps: 200      # Pendulum-v1 truncates here anyway
+
+# --- Schedule ---
+pretrain_steps: 2000        # IL pretraining of base policy on offline data
+total_env_steps: 8000
+batch_size: 128
+utd: 4                      # G in the paper (paper uses 20)
+log_every: 200
+eval_every: 1000
+eval_episodes: 5
+
+# --- Agent ---
+agent:
+  hidden_dim: 128           # paper: 256
+  diffusion_blocks: 2       # paper: 3
+  diffusion_steps: 5        # paper: 10
+  edit_layers: 2            # paper: 3
+  edit_dropout: 0.0
+  beta: 0.3                 # see DECISIONS.md §13
+  ensemble_size: 5          # paper: 10
+  num_min_q: 2
+  n_otf_samples: 4          # paper: 8
+  gamma: 0.99
+  tau: 0.005
+  lr: 0.0003
+  edit_grad_clip: 1.0
+  delayed_edit_steps: 500   # warmup; OTF uses base-only candidates until then
+
+# ---------------------------------------------------------------------------
+# Paper-scale sizing (uncomment to use, expect significant slowdown on CPU):
+# total_env_steps: 200000
+# batch_size: 256
+# utd: 20
+# agent:
+#   hidden_dim: 256
+#   diffusion_blocks: 3
+#   diffusion_steps: 10
+#   edit_layers: 3
+#   ensemble_size: 10
+#   n_otf_samples: 8
+#   delayed_edit_steps: 5000

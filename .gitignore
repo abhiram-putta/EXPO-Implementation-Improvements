@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Checkpoints / large run artifacts (exceed GitHub's 100MB file limit)
+*.ckpt
+*.pt
+*.pth
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Secrets / environment
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+
+# Local Claude Code settings (personal, not shared)
+.claude/settings.local.json

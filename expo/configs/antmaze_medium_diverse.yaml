@@ -1,0 +1,58 @@
+# CPU-FEASIBLE Antmaze medium-diverse config — single seed, scaled down.
+# Targets a ~3-4 hour CPU wall clock. NOT a paper replication; see
+# antmaze_medium_diverse_paper.yaml and RESULTS.md for the paper-scale
+# reference and an honest accounting of the gap.
+#
+# Key shrinks vs paper:
+#   pretrain_steps    500000 -> 50000   (10x)
+#   online_steps      500000 -> 80000   (~6x)
+#   agent hidden       256   -> 128
+#   diffusion T        10    -> 5
+#   ensemble           10    -> 5
+#   N candidates       8     -> 4
+#   UTD                20    -> 4
+#   eval episodes      100   -> 10
+#   batch              256   -> 128
+#   beta (offline2on)  0.0   -> 0.05    (paper's online-only Antmaze value;
+#                                        with shorter pretrain, edits help)
+
+seed: 42
+device: auto
+log_dir: runs/antmaze
+run_name: null
+
+env:
+  name: antmaze
+  dataset_id: D4RL/antmaze/medium-diverse-v1
+
+online_capacity: 200000
+min_online_for_update: 256
+online_ratio: 0.5
+max_episode_steps: 1000     # eval cap; demonstrators take median 412 steps
+                            # to reach goal so anything <700 is structurally
+                            # incapable of measuring success
+pretrain_steps: 50000       # ~85s on CPU; more pretrain matters most
+total_env_steps: 8000       # ~220s at UTD=2 with the smaller agent
+batch_size: 128
+utd: 2                      # reduced from paper's 20 to free env-step budget
+log_every: 200
+eval_every: 4000            # 2 mid-training evals + 1 final = 3 total
+eval_episodes: 3            # capped to keep eval cost manageable
+eval_at_pretrain_end: true  # baseline before any online RL — diagnoses
+                            # whether pretrain or online is doing the work
+
+agent:
+  hidden_dim: 128
+  diffusion_blocks: 2
+  diffusion_steps: 5
+  edit_layers: 2
+  edit_dropout: 0.0
+  beta: 0.05
+  ensemble_size: 5
+  num_min_q: 2
+  n_otf_samples: 4
+  gamma: 0.99
+  tau: 0.005
+  lr: 0.0003
+  edit_grad_clip: 1.0
+  delayed_edit_steps: 2000

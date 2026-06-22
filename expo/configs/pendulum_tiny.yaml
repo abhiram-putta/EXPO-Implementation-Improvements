@@ -1,0 +1,40 @@
+# Tiny smoke config — exists only to verify the full pipeline runs without
+# crashing. Trains for ~30 seconds. Don't expect learning.
+
+seed: 0
+device: cpu
+log_dir: runs/pendulum_smoke
+run_name: smoke
+
+env:
+  name: pendulum
+  offline_transitions: 200
+
+online_capacity: 1000
+min_online_for_update: 32
+online_ratio: 0.5
+max_episode_steps: 50
+
+pretrain_steps: 50
+total_env_steps: 200
+batch_size: 32
+utd: 2
+log_every: 50
+eval_every: 100
+eval_episodes: 2
+
+agent:
+  hidden_dim: 32
+  diffusion_blocks: 1
+  diffusion_steps: 3
+  edit_layers: 1
+  edit_dropout: 0.0
+  beta: 0.3
+  ensemble_size: 3
+  num_min_q: 2
+  n_otf_samples: 2
+  gamma: 0.99
+  tau: 0.005
+  lr: 0.0003
+  edit_grad_clip: 1.0
+  delayed_edit_steps: 50

@@ -1,0 +1,48 @@
+# Vanilla EXPO, serial run (single process = 100% GPU). Resumes from shared
+# 500k IL pretrain checkpoint. ~7 hours wall clock, ~8 env-steps/sec single-
+# process throughput, 200k env steps.
+
+seed: 42
+device: auto
+log_dir: runs/antmaze_vanilla_serial
+run_name: full
+
+env:
+  name: antmaze
+  dataset_id: D4RL/antmaze/medium-diverse-v1
+
+online_capacity: 1000000
+min_online_for_update: 256
+online_ratio: 0.5
+max_episode_steps: 1000
+
+pretrain_steps: 0               # resume loads pretrained weights
+total_env_steps: 200000         # paper does ~250-500k; we do 200k
+batch_size: 256
+utd: 5
+log_every: 1000
+eval_every: 10000               # 20 evals over the run
+eval_episodes: 50               # vs 15 before — much lower noise on binary metric
+eval_at_pretrain_end: false
+save_every_steps: 5000          # max safety — checkpoint every 5k steps
+                                 # = max ~10 min loss on power-cut
+
+# === NO IMPROVEMENTS (this is the baseline) ===
+n_step: 1
+# progressive_beta: not set
+
+agent:
+  hidden_dim: 256
+  diffusion_blocks: 3
+  diffusion_steps: 10
+  edit_layers: 3
+  edit_dropout: 0.0
+  beta: 0.05                    # paper online Antmaze setting
+  ensemble_size: 10
+  num_min_q: 2
+  n_otf_samples: 8
+  gamma: 0.99
+  tau: 0.005
+  lr: 0.0003
+  edit_grad_clip: 1.0
+  delayed_edit_steps: 5000
