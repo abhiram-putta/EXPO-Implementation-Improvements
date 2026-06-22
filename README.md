@@ -1,8 +1,8 @@
 # EXPO — Reference Implementation + Improvements
 
 ## Team / Contributors
-- Your Name ([@abhiram24putta](https://github.com/abhiram24putta))
-- Friend's Name ([@tarunuppuluri](https://github.com/tarunuppuluri))
+- Abhiram Putta ([@abhiram24putta](https://github.com/abhiram24putta))
+- Tarun Teja Uppuluri ([@tarunuppuluri](https://github.com/tarunuppuluri))
 
 A from-scratch PyTorch implementation of **EXPO (Expressive Policy
 Optimization)** — Dong, Li, Sadigh & Finn (2025), *EXPO: Stable
