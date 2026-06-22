@@ -1,7 +1,7 @@
 # EXPO — Reference Implementation + Improvements
 
 ## Team / Contributors
-- Abhiram Putta ([@abhiram24putta](https://github.com/abhiram24putta))
+- Abhiram Putta ([@abhiram-putta](https://github.com/abhiram-putta))
 - Tarun Teja Uppuluri ([@tarunuppuluri](https://github.com/tarunuppuluri))
 
 A from-scratch PyTorch implementation of **EXPO (Expressive Policy
